@@ -13,6 +13,9 @@ const geistSans = Manrope({
 export const metadata: Metadata = {
   title: "Cllario",
   description: "The next generation of self-development apps",
+    verification:{
+        yandex: "1cdb6b0d41774794",
+    },
 };
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {

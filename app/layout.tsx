@@ -3,6 +3,7 @@ import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import FetchProvider from "@/providers/FetchProvider";
+import YandexMetrika from "@/components/YandexMetrika";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -18,7 +19,8 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
   return (
     <html lang="en">
       <body className={`${geistSans.variable} antialiased`}>
-        <Header/>
+      <YandexMetrika />
+      <Header/>
         <FetchProvider>
             {children}
         </FetchProvider>

@@ -3,6 +3,7 @@
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {Person} from "@/types/Person";
+import toast from "react-hot-toast";
 
 export default function AuthRegistration(){
     const router = useRouter()
@@ -23,10 +24,11 @@ export default function AuthRegistration(){
             const result = await res.json();
 
             if(!res.ok) throw new Error(result.message);
-
+            toast.success('Успешная регистрация!');
             console.log("Регистрация успешна:", result);
             router.push("/");
         } catch(error){
+            toast.error("Ошибка регистрации, повторите попытку позже");
             console.error("ошибка регистрации", error);
             alert(error);
         }

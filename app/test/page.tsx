@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import QuestionCard from "@/components/TestCard";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function TestPage() {
     const router = useRouter();
@@ -76,10 +77,11 @@ export default function TestPage() {
             const result = await res.json();
 
             if (!res.ok) throw new Error(result.message);
-
+            toast.success('Тест сохранен успешно, пройдите в Dashboard для получения результатов')
             console.log(data)
             router.push("/");
         } catch (e) {
+            toast.error("Произошла ошибка, повторите попытку позже")
             console.error(e);
         }
     };

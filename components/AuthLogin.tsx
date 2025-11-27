@@ -2,6 +2,7 @@
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {Person} from "@/types/Person";
+import toast from "react-hot-toast";
 
 
 export default function AuthLogin(){
@@ -21,12 +22,12 @@ export default function AuthLogin(){
             const result = await res.json();
 
             if(!res.ok) throw new Error(result.message);
-
+            toast.success('Успешный вход!');
             console.log("Авторизация прошла успешна:", result);
             router.push("/");
         } catch(error){
+            toast.error('Ошибка авторизации');
             console.error("ошибка авторизации", error);
-            alert(error);
         }
     }
 

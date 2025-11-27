@@ -10,7 +10,7 @@ export default function Header(){
             <nav>
                 <ul className="text-[#5170FF] font-semibold text-sm md:text-xl flex justify-between items-center ">
                     <li className="flex items-center gap-1">
-                        <img width={60} src="/Cllario-logo.jpg" alt="logotype"/>
+                        <img width={60} src="/Cllario-logo.jpg" alt="cllario logo"/>
                         <Link href="/">Cllario</Link>
                     </li>
                     <li>

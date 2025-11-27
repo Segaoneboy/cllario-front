@@ -30,7 +30,6 @@ export default function AuthRegistration(){
         } catch(error){
             toast.error("Ошибка регистрации, повторите попытку позже");
             console.error("ошибка регистрации", error);
-            alert(error);
         }
     }
 

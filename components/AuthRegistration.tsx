@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {Person} from "@/types/Person";
 import toast from "react-hot-toast";
+import {saveGuestTest} from "@/utils/saveTestData";
 
 export default function AuthRegistration(){
     const router = useRouter()
@@ -24,9 +25,18 @@ export default function AuthRegistration(){
             const result = await res.json();
 
             if(!res.ok) throw new Error(result.message);
+
             toast.success('Успешная регистрация!');
-            console.log("Регистрация успешна:", result);
-            router.push("/");
+            const { saved } = await saveGuestTest();
+
+            if(saved){
+                toast.success("Результат теста сохранен")
+                router.push("/dashboard");
+            } else{
+                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже")
+                router.push("/");
+            }
+
         } catch(error){
             toast.error("Ошибка регистрации, повторите попытку позже");
             console.error("ошибка регистрации", error);

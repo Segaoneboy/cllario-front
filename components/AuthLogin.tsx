@@ -3,6 +3,7 @@ import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {Person} from "@/types/Person";
 import toast from "react-hot-toast";
+import {saveGuestTest} from "@/utils/saveTestData";
 
 
 export default function AuthLogin(){
@@ -23,8 +24,16 @@ export default function AuthLogin(){
 
             if(!res.ok) throw new Error(result.message);
             toast.success('Успешный вход!');
-            console.log("Авторизация прошла успешна:", result);
-            router.push("/");
+            const { saved } = await saveGuestTest();
+
+            if(saved){
+                toast.success("Результат теста сохранен")
+                router.push("/dashboard");
+            } else{
+                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже")
+                router.push("/");
+            }
+
         } catch(error){
             toast.error('Ошибка авторизации');
             console.error("ошибка авторизации", error);

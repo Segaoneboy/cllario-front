@@ -6,8 +6,10 @@ import QuestionCard from "@/components/TestCard";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import DashboardComponent from "@/components/DashboardComponent";
+import {useUser} from "@/context/userContext";
 
 export default function TestPage() {
+    const { refreshUser } = useUser()
     const router = useRouter();
     const [resultPlan, setResultPlan] = useState<any | null>(null);
     const {
@@ -86,6 +88,7 @@ export default function TestPage() {
                     answers: result.dashboard.results,
                     plan: result.dashboard.plan,
                 }));
+                await refreshUser();
                 toast.success('Тест успешно пройден')
                 setResultPlan(result.dashboard.plan);
             }

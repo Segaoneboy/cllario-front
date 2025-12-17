@@ -4,10 +4,12 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {Person} from "@/types/Person";
 import toast from "react-hot-toast";
 import {saveGuestTest} from "@/utils/saveTestData";
+import {useUser} from "@/context/userContext";
 
 
 export default function AuthLogin(){
     const router = useRouter();
+    const { refreshUser } = useUser();
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Person>();
     const obSubmit: SubmitHandler<Person> = async (data) => {
         try{
@@ -27,9 +29,11 @@ export default function AuthLogin(){
             const { saved } = await saveGuestTest();
 
             if(saved){
+                await refreshUser();
                 toast.success("Результат теста сохранен")
                 router.push("/dashboard");
             } else{
+                await refreshUser();
                 toast.error("Возникла ошибка при сохранении теста. Попробуйте позже")
                 router.push("/");
             }

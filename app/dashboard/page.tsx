@@ -39,7 +39,7 @@ export default function DashboardPage() {
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
-            <UserProfile user={user}/>
+            <UserProfile user={user as any}/>
         </div>
     );
 }

@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 export type UserContextType = {
     authorized: boolean;
+    loading: boolean;
     name?: string;
     email?: string;
     plan?: any | null;
@@ -11,11 +12,13 @@ export type UserContextType = {
 
 const UserContext = createContext<UserContextType>({
     authorized: false,
+    loading: true,
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<UserContextType>({
         authorized: false,
+        loading: false,
     });
 
     useEffect(() => {
@@ -25,7 +28,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         })
             .then(async (res) => {
                 if (res.status === 401) {
-                    setUser({ authorized: false });
+                    setUser({ authorized: false, loading: false });
                     return;
                 }
 
@@ -36,13 +39,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
                 setUser({
                     authorized: true,
+                    loading: false,
                     name: u.name,
                     email: u.email,
                     plan: lastTest?.plan ?? null,
                 });
             })
             .catch(() => {
-                setUser({ authorized: false });
+                setUser({ authorized: false, loading: false });
             });
     }, []);
 

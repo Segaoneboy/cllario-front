@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import FetchProvider from "@/providers/FetchProvider";
 import YandexMetrika from "@/components/YandexMetrika";
 import {Toaster} from "react-hot-toast";
+import {UserProvider} from "@/context/userContext";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -24,11 +25,13 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
     <html lang="en">
       <body className={`${geistSans.variable} antialiased`}>
       <YandexMetrika />
-      <Toaster/>
-      <Header/>
-        <FetchProvider>
-            {children}
-        </FetchProvider>
+      <UserProvider>
+          <Toaster/>
+          <Header/>
+          <FetchProvider>
+              {children}
+          </FetchProvider>
+      </UserProvider>
       </body>
     </html>
   );

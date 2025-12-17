@@ -81,6 +81,7 @@ export default function TestPage() {
 
             if (!res.ok) throw new Error(result.message);
             if (result.saved){
+                await refreshUser();
                 toast.success('Тест успешно пройден и сохранен в личном кабинете')
                 router.push("/dashboard");
             } else{

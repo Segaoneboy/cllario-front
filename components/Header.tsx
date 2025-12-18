@@ -39,17 +39,17 @@ export default function Header(){
                     </Link>
 
                     <li>
-                        <Link href="/test">Test</Link>
+                        <Link href="/test">Тест</Link>
                     </li>
                     { loading ? <NavSkeleton /> : authorized ? (
                         <li>
-                            <Link href="/dashboard">Dashboard</Link>
+                            <Link href="/dashboard">Личный кабинет</Link>
                         </li>
 
 
                     ) : (
                         <li>
-                            <Link href="/auth">Account</Link>
+                            <Link href="/auth">Авторизация</Link>
                         </li>
                     )
                     }

@@ -31,7 +31,7 @@ export default function DashboardComponent({ plan }: DashboardComponentProps) {
                     <h2 className="text-xl font-semibold text-[#4a63df] mb-3">
                         Общий анализ
                     </h2>
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-sm md:text-md text-gray-700 leading-relaxed">
                         {plan.summary}
                     </p>
                 </div>

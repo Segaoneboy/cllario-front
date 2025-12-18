@@ -37,12 +37,12 @@ export default function AuthRegistration(){
                 router.push("/dashboard");
             } else{
                 await refreshUser();
-                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже")
+                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже", {duration: 2000})
                 router.push("/");
             }
 
         } catch(error){
-            toast.error("Ошибка регистрации, повторите попытку позже");
+            toast.error("Ошибка регистрации, повторите попытку позже", {duration: 2000});
             console.error("ошибка регистрации", error);
         }
     }

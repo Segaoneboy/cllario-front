@@ -34,12 +34,12 @@ export default function AuthLogin(){
                 router.push("/dashboard");
             } else{
                 await refreshUser();
-                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже")
+                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже", {duration: 2000})
                 router.push("/");
             }
 
         } catch(error){
-            toast.error('Ошибка авторизации');
+            toast.error('Ошибка авторизации', {duration: 2000});
             console.error("ошибка авторизации", error);
         }
     }

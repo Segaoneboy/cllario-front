@@ -28,7 +28,7 @@ export default function Header(){
             </header>
     );}
     return(
-        <header className="m-4">
+        <header className="m-4 ">
             <nav>
                 <ul className="text-[#5170FF] font-semibold text-sm md:text-xl flex justify-between items-center ">
                     <Link href="/">
@@ -40,6 +40,10 @@ export default function Header(){
 
                     <li>
                         <Link href="/test">Тест</Link>
+                    </li>
+
+                    <li>
+                        <a href="https://t.me/sycroll">Поддержка</a>
                     </li>
                     { loading ? <NavSkeleton /> : authorized ? (
                         <li>

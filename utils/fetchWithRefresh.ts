@@ -20,7 +20,7 @@ export default function fetchWithRefresh(){
         const url = typeof input === 'string' ? input : input.toString();
 
         // Эти эндпоинты не трогаем
-        if (url.includes('/api/auth/login') || url.includes('/api/auth/register') || url.includes('/api/auth/refresh')) {
+        if (url.includes('/api/auth/login') || url.includes('/api/auth/register') || url.includes('/api/auth/refresh') || url.includes('/api/test/analysis')) {
             return originalFetch(input, {
                 ...init,
                 credentials: 'include',

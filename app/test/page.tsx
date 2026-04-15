@@ -6,15 +6,18 @@ import QuestionCard from "@/components/TestCard";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import DashboardComponent from "@/components/DashboardComponent";
-import {useUser} from "@/context/userContext";
+import { useUser } from "@/context/userContext";
 
 export default function TestPage() {
-    const { refreshUser } = useUser()
+    const { refreshUser } = useUser();
     const router = useRouter();
     const [resultPlan, setResultPlan] = useState<any | null>(null);
+
+    // Добавляем control сюда, чтобы QuestionCard мог отслеживать выбор
     const {
         register,
         handleSubmit,
+        control,
         formState: { isSubmitting }
     } = useForm({
         shouldUnregister: false,
@@ -71,115 +74,121 @@ export default function TestPage() {
             const res = await fetch("/api/test/analysis", {
                 method: "POST",
                 credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
             const result = await res.json();
-
             if (!res.ok) throw new Error(result.message);
-            if (result.saved){
+
+            if (result.saved) {
                 await refreshUser();
-                toast.success('Тест успешно пройден и сохранен в личном кабинете')
+                toast.success('Тест успешно пройден и сохранен');
                 router.push("/dashboard");
-            } else{
+            } else {
                 localStorage.setItem("guestTestResult", JSON.stringify({
                     answers: result.dashboard.results,
                     plan: result.dashboard.plan,
                 }));
                 await refreshUser();
-                toast.success('Тест успешно пройден')
+                toast.success('Тест успешно пройден');
                 setResultPlan(result.dashboard.plan);
             }
-
-
         } catch (e) {
-            toast.error("Произошла ошибка, повторите попытку позже")
+            toast.error("Произошла ошибка, повторите попытку позже");
             console.error(e);
         }
     };
 
-    const next = () => {
-        if (step < questions.length - 1) setStep(step + 1);
-    };
+    const next = () => { if (step < questions.length - 1) setStep(step + 1); };
+    const prev = () => { if (step > 0) setStep(step - 1); };
 
-    const prev = () => {
-        if (step > 0) setStep(step - 1);
-    };
-
-    if(resultPlan !== null){
+    if (resultPlan !== null) {
         return (
-            <div className="p-6 max-w-4xl mx-auto">
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-6">
-                    <h1 className="text-3xl font-bold text-[#4a63df] ">
-                        Привет, Гость 👋
-                    </h1>
-                    <button onClick={() => router.push("/auth")} className="px-6 py-2 rounded-xl bg-[#4a63df] text-white shadow hover:bg-[#3d54c4]">Сохранить результат</button>
-                    <p className="text-gray-600 mt-1"></p>
+            <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto animate-fade-in">
+                <div className="bg-white border-2 border-[#5170FF]/10 rounded-[2.5rem] p-8 md:p-12 mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div>
+                        <h1 className="text-4xl font-bold text-[#5170FF] mb-2">
+                            Привет, Гость 👋
+                        </h1>
+                        <p className="text-[#5170FF]/60 font-medium">Ваш временный результат готов. Создайте аккаунт, чтобы не потерять его.</p>
+                    </div>
+                    <button
+                        onClick={() => router.push("/auth")}
+                        className="px-8 py-4 rounded-2xl bg-[#5170FF] text-white font-bold text-lg shadow-xl shadow-[#5170FF]/20 hover:scale-105 transition-all"
+                    >
+                        Сохранить результат
+                    </button>
                 </div>
                 <DashboardComponent plan={resultPlan}/>
             </div>
-
         )
-    } else{
-        return (
-            <div className="min-h-screen flex justify-center items-center p-4">
-                <form
-                    onSubmit={(e) => {
-                        if (step === questions.length - 1) {
-                            handleSubmit(onSubmit)(e);
-                        } else {
-                            e.preventDefault();
-                        }
-                    }}
-                    className="w-full max-w-xl space-y-6"
-                >
-                    <QuestionCard
-                        key={questions[step].name}
-                        register={register}
-                        question={questions[step].question}
-                        name={questions[step].name}
-                        options={questions[step].options}
+    }
+
+    return (
+        <div className="min-h-screen bg-white flex flex-col justify-center items-center p-6 pt-24">
+            {/* Индикатор прогресса */}
+            <div className="w-full max-w-xl mb-8 flex gap-2">
+                {questions.map((_, i) => (
+                    <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${i <= step ? 'bg-[#5170FF]' : 'bg-[#5170FF]/10'}`}
                     />
+                ))}
+            </div>
 
-                    <div className="flex justify-between mt-4">
-                        <button
-                            type="button"
-                            onClick={prev}
-                            disabled={step === 0 || isSubmitting}
-                            className={`px-6 py-2 rounded-xl border ${
-                                step === 0
-                                    ? "opacity-40 cursor-not-allowed"
-                                    : "border-[#4a63df] text-[#4a63df]"
-                            }`}
-                        >
-                            ← Назад
-                        </button>
+            <form
+                onSubmit={(e) => {
+                    if (step === questions.length - 1) {
+                        handleSubmit(onSubmit)(e);
+                    } else {
+                        e.preventDefault();
+                    }
+                }}
+                className="w-full max-w-2xl space-y-10"
+            >
+                <QuestionCard
+                    key={questions[step].name}
+                    register={register}
+                    question={questions[step].question}
+                    name={questions[step].name}
+                    control={control} // Передаем control, теперь ошибки не будет
+                    options={questions[step].options}
+                />
 
+                <div className="flex justify-between items-center gap-4 px-2">
+                    <button
+                        type="button"
+                        onClick={prev}
+                        disabled={step === 0 || isSubmitting}
+                        className={`text-lg font-bold transition-all ${
+                            step === 0 ? "opacity-0 pointer-events-none" : "text-[#5170FF] hover:opacity-60"
+                        }`}
+                    >
+                        ← Назад
+                    </button>
+
+                    <div className="flex-1 flex justify-end">
                         {step === questions.length - 1 ? (
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="px-6 py-2 rounded-xl bg-[#4a63df] text-white shadow hover:bg-[#3d54c4] disabled:opacity-50"
+                                className="bg-[#5170FF] text-white px-10 py-4 rounded-2xl text-xl font-bold hover:shadow-2xl hover:shadow-[#5170FF]/30 transition-all active:scale-95 disabled:opacity-50"
                             >
-                                {isSubmitting ? "Загрузка..." : "Завершить"}
+                                {isSubmitting ? "Анализ данных..." : "Завершить"}
                             </button>
                         ) : (
                             <button
                                 type="button"
                                 onClick={next}
-                                disabled={isSubmitting}
-                                className="px-6 py-2 rounded-xl bg-[#4a63df] text-white shadow hover:bg-[#3d54c4]"
+                                className="bg-[#5170FF] text-white px-10 py-4 rounded-2xl text-xl font-bold hover:shadow-2xl hover:shadow-[#5170FF]/30 transition-all active:scale-95"
                             >
                                 Далее →
                             </button>
                         )}
                     </div>
-                </form>
-            </div>
-        );
-    }
-
+                </div>
+            </form>
+        </div>
+    );
 }

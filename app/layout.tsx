@@ -6,6 +6,7 @@ import FetchProvider from "@/providers/FetchProvider";
 import YandexMetrika from "@/components/YandexMetrika";
 import {Toaster} from "react-hot-toast";
 import {UserProvider} from "@/context/userContext";
+import Footer from "@/components/Footer";
 
 const geistSans = Manrope({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
           <FetchProvider>
               {children}
           </FetchProvider>
+          <Footer/>
       </UserProvider>
       </body>
     </html>

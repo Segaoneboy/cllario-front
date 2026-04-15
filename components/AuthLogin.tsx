@@ -49,7 +49,7 @@ export default function AuthLogin(){
             <div className="flex min-h-screen items-center justify-center  px-4">
                 <div className="w-full max-w-sm space-y-6 text-[#5170FF]">
                     <div className="flex flex-col items-center">
-                        <img src="/Cllario-logo.jpg" alt="логотип" width={80} height={80} />
+                        <img src="/Cllario-logo-site.png" alt="логотип" width={80} height={80} />
                         <h1 className="text-2xl font-semibold mt-4 text-center">Войти в учетную запись</h1>
                     </div>
 

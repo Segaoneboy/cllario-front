@@ -16,10 +16,10 @@ export default function Header(){
         return (
             <header className="m-4">
                 <nav>
-                    <ul className="text-[#5170FF] font-semibold text-sm md:text-xl flex justify-center items-center ">
+                    <ul className="text-white font-semibold text-sm md:text-xl flex justify-center items-center ">
                         <Link href="/">
                             <li className="flex items-center gap-1">
-                                <img width={60} src="/Cllario-logo.jpg" alt="cllario logo"/>
+                                {/*<img width={60} src="/Cllario-logo.jpg" alt="cllario logo"/>*/}
                                 <p className="hidden md:inline">Cllario</p>
                             </li>
                         </Link>
@@ -28,12 +28,12 @@ export default function Header(){
             </header>
     );}
     return(
-        <header className="m-4 ">
+        <header className="p-4 ">
             <nav>
                 <ul className="text-[#5170FF] font-semibold text-sm md:text-xl flex justify-between items-center ">
                     <Link href="/">
                         <li className="flex items-center gap-1">
-                            <img width={60} src="/Cllario-logo.jpg" alt="cllario logo"/>
+                            <img width={60} src="/Cllario-logo-site.png" alt="cllario logo"/>
                             <p className="hidden md:inline">Cllario</p>
                         </li>
                     </Link>

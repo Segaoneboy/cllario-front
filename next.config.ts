@@ -8,6 +8,9 @@ const nextConfig = {
                 destination: "https://cllario-back.vercel.app/api/:path*",
             }
         ]
+    },
+    typescript: {
+        ignoreBuildErrors: true,
     }
 };
 

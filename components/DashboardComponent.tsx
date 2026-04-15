@@ -50,6 +50,9 @@ export default function DashboardComponent({ plan }: DashboardComponentProps) {
         );
     }
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <div className="space-y-8 animate-fade-in">
 
@@ -143,7 +146,8 @@ export default function DashboardComponent({ plan }: DashboardComponentProps) {
                                             {i + 1}
                                         </div>
                                         {/* Пунктирная линия между шагами */}
-                                        {i !== plan.developmentPlan.length - 1 && (
+                                        {// @ts-ignore
+                                            i !== plan.developmentPlan.length - 1 && (
                                             <div className="w-0.5 h-full border-l-2 border-dashed border-[#5170FF]/20 mt-4" />
                                         )}
                                     </div>

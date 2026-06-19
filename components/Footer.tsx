@@ -6,7 +6,6 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-8">
 
-                    {/* Лого и слоган */}
                     <div className="flex flex-col items-center md:items-start gap-4">
                         <Link href="/" className="flex items-center gap-2 group">
                             <img
@@ -19,22 +18,16 @@ export default function Footer() {
                             Cllario
                         </span>
                         </Link>
-                        <p className="text-[#5170FF]/60 text-sm font-medium">
-                            Навигация в мире вашей карьеры.
-                        </p>
                     </div>
 
-                    {/* Навигация в футере */}
                     <div className="flex flex-wrap justify-center gap-8 text-[#5170FF] font-semibold">
-                        <Link href="/test" className="hover:opacity-60 transition-opacity">Тест</Link>
-                        <a href="https://t.me/cllario_news" className="hover:opacity-60 transition-opacity">Новости</a>
+                        <a href="https://t.me/cllario" className="hover:opacity-60 transition-opacity">Новости</a>
                         <a href="https://t.me/sycroll" className="hover:opacity-60 transition-opacity">Поддержка</a>
                     </div>
 
-                    {/* Копирайт */}
-                    <div className="text-[#5170FF]/40 text-sm font-medium">
+                    {/* <div className="text-[#5170FF]/40 text-sm font-medium">
                         © {new Date().getFullYear()} Cllario
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </footer>

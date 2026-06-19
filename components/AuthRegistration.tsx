@@ -1,142 +1,120 @@
-"use client"
+"use client";
 
-import {useRouter} from "next/navigation";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {Person} from "@/types/Person";
-import toast from "react-hot-toast";
-import {saveGuestTest} from "@/utils/saveTestData";
-import {useUser} from "@/context/userContext";
+import { useForm, SubmitHandler } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query";
+import { apiFetch } from "@/utils/api";
 
-export default function AuthRegistration(){
-    const router = useRouter()
-    const { refreshUser } = useUser();
-    const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<Person>();
-    const obSubmit: SubmitHandler<Person> = async (data) => {
-        console.log("Отправка данных", data );
+import { AuthUser } from "@/types/User";
 
-        try{
-            const res = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(data),
-            });
+export default function AuthRegistration({ onToggleView }: { onToggleView: () => void }) {
+  const {register, handleSubmit, formState: { errors } } = useForm<AuthUser>();
 
-            const result = await res.json();
+  const registerMutation = useMutation({
+    mutationFn: (body: any) =>
+      apiFetch("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      onToggleView();
+    },
+  });
 
-            if(!res.ok) throw new Error(result.message);
+  const onSubmit: SubmitHandler<AuthUser> = (data) =>{
+    registerMutation.mutate(data)
+  }
+  
 
-            toast.success('Успешная регистрация!');
-            const { saved } = await saveGuestTest();
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
+      <h2 className="text-[26px] font-semibold text-[#5170FF] text-center mb-6 tracking-wide">
+        Регистрация аккаунта
+      </h2>
 
-            if(saved){
-                await refreshUser();
-                toast.success("Результат теста сохранен")
-                router.push("/dashboard");
-            } else{
-                await refreshUser();
-                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже", {duration: 2000})
-                router.push("/");
-            }
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="flex flex-col text-left">
+          <label className="text-sm text-zinc-600 font-medium mb-1">Имя</label>
+          <input
+            type="text"
+            {...register("firstName", {
+              required:"Поле обязательное"
+            })}
+            className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[14px] text-zinc-800 focus:outline-none"
+            
+          />
+          <p className="text-red-500 mt-1">{errors.firstName?.message}</p>
+        </div>
+        <div className="flex flex-col text-left">
+          <label className="text-sm text-zinc-600 font-medium mb-1">Фамилия</label>
+          <input
+            type="text"
+            {...register("lastName", {
+              required:"Поле обязательное"
+            })}
+            className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[14px] text-zinc-800 focus:outline-none"
+            
+          />
+          <p className="text-red-500 mt-1">{errors.lastName?.message}</p>
+        </div>
+      </div>
 
-        } catch(error){
-            toast.error("Ошибка регистрации, повторите попытку позже", {duration: 2000});
-            console.error("ошибка регистрации", error);
-        }
-    }
+      <div className="mb-4 flex flex-col text-left w-full">
+        <label className="text-sm text-zinc-600 font-medium mb-1">Email</label>
+        <input
+          type="email"
+          {...register("email", {pattern:{value:/^[a-z0-9._%+-]+\@[a-z0-9.-]+\.[a-z]{2,}$/i, message: "Неккоректный email"}, required:"Поле обязательное"})}
+          className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
+          
+        />
+        <p className="text-red-500 mt-1">{errors.email?.message}</p>
+      </div>
 
+      <div className="mb-4 flex flex-col text-left w-full">
+        <label className="text-sm text-zinc-600 font-medium mb-1">Password</label>
+        <input
+          type="password"
+          {...register("password", {
+            minLength: {
+              value: 8,
+              message: "Минимальная длина пароля 8 символов"
+            }, 
+            required:"Поле обязательное"
+          })}
+          className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
+          
+        />
+        <p className="text-red-500 mt-1">{errors.password?.message}</p>
+      </div>
 
-    return(
-        <>
-            <div className="flex min-h-screen items-center justify-center  px-4">
-                <div className="w-full max-w-sm space-y-6 text-[#5170FF]">
-                    <div className="flex flex-col items-center">
-                        <img src="/Cllario-logo.jpg" alt="логотип" width={80} height={80} />
-                        <h1 className="text-2xl mt-4 text-center font-semibold">Зарегистрировать аккаунт</h1>
-                    </div>
+      <div className="mb-6 flex flex-col text-left w-full">
+        <label className="text-sm text-zinc-600 font-medium mb-1">Роль в системе</label>
+        <select
+          {...register("role", {required:"Поле обязательное"})}
+          className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[15px] text-zinc-800 focus:outline-none cursor-pointer appearance-none"
+        >
+          <option value="employee">Сотрудник</option>
+          <option value="teamlead">Тимлид</option>
+          <option value="hr">HR Директор</option>
+        </select>
+      </div>
 
-                    <form className="space-y-4" onSubmit={handleSubmit(obSubmit)}>
-                        <div className="flex flex-col gap-1">
-                            <div>
-                                <label htmlFor="name" className="block text-sm mb-1 ml-1 text-[#585858] font-semibold">
-                                    Имя
-                                </label>
-                                <input
-                                    {...register("name", {required: "Введите имя"})}
-                                    id="name"
-                                    className="w-full rounded  p-2 text-[#585858] border-[#5170FF] focus:outline-none focus:ring-1 focus:ring-[#5170FF] border-2"
-                                />
-                                {errors.name && (
-                                    <p className="text-red-500 text-sm mt-1">
-                                        {errors.name.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor="email" className="block text-sm mb-1 ml-1 text-[#585858] font-semibold ">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    {...register("email", {
-                                        required: "Введите email",
-                                        pattern: {
-                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                            message: "Некорректный email",
-                                        },
-                                    })}
-                                    id="email"
-                                    className="w-full rounded p-2 text-[#585858] border-[#5170FF] border-2 focus:outline-none focus:ring-1 focus:ring-[#5170FF]"
-                                />
-                                {errors.email && (
-                                    <p className="text-red-500 text-sm mt-1 ">
-                                        {errors.email.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block text-sm mb-1 ml-1 text-[#585858] font-semibold">
-                                    Пароль
-                                </label>
-                                <input
-                                    type="password"
-                                    {...register("password" as any, {
-                                        required: "Введите пароль",
-                                        minLength: {
-                                            value: 8,
-                                            message: "Минимум 8 символов",
-                                        },
-                                    })}
-                                    id="password"
-                                    className="w-full rounded p-2 text-[#585858] border-[#5170FF] border-2 focus:outline-none focus:ring-1 focus:ring-[#5170FF]"
-                                />
-                                {errors.password && (
-                                    <p className="text-red-500 text-sm mt-1">
-                                        {errors.password.message}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+      <button
+        type="submit"
+        disabled={registerMutation.isPending}
+        className="w-full bg-[#5170FF] hover:bg-[#405fef] text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center"
+      >
+        {registerMutation.isPending ? "Создание..." : "Зарегистрироваться"}
+      </button>
 
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full rounded bg-[#4a63df] hover:bg-[#4356c0] text-white my-4 py-2 font-medium transition disabled:opacity-60"
-                        >
-                            {isSubmitting ? "Создание..." : "Создать"}
-                        </button>
-                    </form>
-
-                    <p className="text-center text-sm text-gray-400">
-                        Уже есть аккаунт?{" "}
-                        <a href="#" className="text-[#5170FF] hover:text-[#4356c0]">
-                            Войти в аккаунт
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </>
-    )
+      <p className="text-center text-[14px] text-zinc-800 mt-6">
+        Уже есть аккаунт?{" "}
+        <span
+          onClick={onToggleView}
+          className="text-[#637dff] hover:underline cursor-pointer"
+        >
+          Войти
+        </span>
+      </p>
+    </form>
+  );
 }

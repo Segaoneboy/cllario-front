@@ -5,11 +5,8 @@ import { useForm } from "react-hook-form";
 import QuestionCard from "@/components/TestCard";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import DashboardComponent from "@/components/DashboardComponent";
-import { useUser } from "@/context/userContext";
 
 export default function TestPage() {
-    const { refreshUser } = useUser();
     const router = useRouter();
     const [resultPlan, setResultPlan] = useState<any | null>(null);
 
@@ -82,7 +79,6 @@ export default function TestPage() {
             if (!res.ok) throw new Error(result.message);
 
             if (result.saved) {
-                await refreshUser();
                 toast.success('Тест успешно пройден и сохранен');
                 router.push("/dashboard");
             } else {
@@ -90,7 +86,6 @@ export default function TestPage() {
                     answers: result.dashboard.results,
                     plan: result.dashboard.plan,
                 }));
-                await refreshUser();
                 toast.success('Тест успешно пройден');
                 setResultPlan(result.dashboard.plan);
             }
@@ -120,7 +115,11 @@ export default function TestPage() {
                         Сохранить результат
                     </button>
                 </div>
-                <DashboardComponent plan={resultPlan}/>
+                <div className="rounded-lg border border-[#5170FF]/10 bg-white p-6 text-[#585858]">
+                    <pre className="whitespace-pre-wrap break-words text-sm">
+                        {JSON.stringify(resultPlan, null, 2)}
+                    </pre>
+                </div>
             </div>
         )
     }

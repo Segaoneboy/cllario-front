@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers"
 import Header from "@/components/Header";
-import FetchProvider from "@/providers/FetchProvider";
 import YandexMetrika from "@/components/YandexMetrika";
 import {Toaster} from "react-hot-toast";
-import {UserProvider} from "@/context/userContext";
 import Footer from "@/components/Footer";
 
 const geistSans = Manrope({
@@ -26,14 +25,12 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
     <html lang="en">
       <body className={`${geistSans.variable} antialiased`}>
       <YandexMetrika />
-      <UserProvider>
           <Toaster/>
           <Header/>
-          <FetchProvider>
+          <Providers>
               {children}
-          </FetchProvider>
+          </Providers>
           <Footer/>
-      </UserProvider>
       </body>
     </html>
   );

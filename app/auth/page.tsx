@@ -1,31 +1,32 @@
-"use client"
-import {useEffect, useState} from "react";
-import AuthRegistration from "@/components/AuthRegistration";
+"use client";
+
+import { useState } from "react";
 import AuthLogin from "@/components/AuthLogin";
+import AuthRegistration from "@/components/AuthRegistration";
 
-export default function Account(){
-    const [mode, setMode] = useState<"signup" | "login" | "forgot">("login");
-    const hashUpdate = () =>{
-        const hash = window.location.hash;
-        if(hash === "#signup"){
-            setMode('signup')
-        } else if(hash === "#forgotpass"){
-            setMode("forgot")
-        } else{
-            setMode("login")
-        }
-    }
-    useEffect(()=>{
-        hashUpdate();
-        window.addEventListener("hashchange", hashUpdate);
-        return () => {
-            window.removeEventListener("hashchange", hashUpdate);
-        }
-    }, [])
+export default function AuthPage() {
+  const [isLoginView, setIsLoginView] = useState(true);
 
-    if(mode === "signup"){
-        return <AuthRegistration/>
-    } else if(mode === "login"){
-        return <AuthLogin/>
-    }
-};
+  return (
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 font-sans selection:bg-[#5170FF]/20">
+      <div className="w-full max-w-[400px] flex flex-col items-center">
+        
+        {/* Логотип по центру */}
+        <div className="mb-4">
+          <img
+            src="/Cllario-logo-site.png"
+            alt="cllario logo"
+            className="w-24 h-auto object-contain"
+          />
+        </div>
+
+        {/* Рендеринг нужной формы */}
+        {isLoginView ? (
+          <AuthLogin onToggleView={() => setIsLoginView(false)} />
+        ) : (
+          <AuthRegistration onToggleView={() => setIsLoginView(true)} />
+        )}
+      </div>
+    </div>
+  );
+}

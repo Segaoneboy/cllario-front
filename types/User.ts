@@ -14,3 +14,15 @@ export type UserContextType = {
         plan?: Plan | null;
     }[];
 };
+enum UserRole {
+    employee = "employee",
+    teamlead = "teamlead",
+    hr = "hr"
+}
+export interface AuthUser {
+    firstName?: string;
+    lastName?: string;
+    email: string;
+    password: string;
+    role?: UserRole;
+}

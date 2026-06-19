@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import DashboardComponent from "@/components/DashboardComponent";
-import { UserCircle, Mail } from "lucide-react";
+import { IconMail } from "@tabler/icons-react";
 
 type Plan = {
     summary?: string | null;
@@ -44,7 +43,7 @@ export default function UserProfile({ user }: Props) {
                             Привет, {user.name}
                         </h1>
                         <div className="flex items-center justify-center md:justify-start gap-2 text-[#5170FF]/60 font-medium">
-                            <Mail size={18} />
+                            <IconMail size={18} />
                             <span>{user.email}</span>
                         </div>
                     </div>
@@ -63,7 +62,41 @@ export default function UserProfile({ user }: Props) {
                     <h2 className="text-2xl font-bold text-[#5170FF]">Результаты анализа</h2>
                     <div className="h-px bg-[#5170FF]/10 flex-1" />
                 </div>
-                <DashboardComponent plan={user.plan} />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="rounded-lg border border-[#5170FF]/10 bg-white p-5">
+                        <h3 className="mb-2 font-bold text-[#5170FF]">Краткое резюме</h3>
+                        <p className="text-sm leading-relaxed text-[#585858]">
+                            {user.plan.summary || "Резюме пока не сформировано."}
+                        </p>
+                    </div>
+
+                    <div className="rounded-lg border border-[#5170FF]/10 bg-white p-5">
+                        <h3 className="mb-2 font-bold text-[#5170FF]">Зоны роста</h3>
+                        <ul className="space-y-2 text-sm text-[#585858]">
+                            {(user.plan.weaknesses?.length ? user.plan.weaknesses : ["Данные пока не сформированы."]).map((item) => (
+                                <li key={item}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="rounded-lg border border-[#5170FF]/10 bg-white p-5">
+                        <h3 className="mb-2 font-bold text-[#5170FF]">Сильные стороны</h3>
+                        <ul className="space-y-2 text-sm text-[#585858]">
+                            {(user.plan.strengths?.length ? user.plan.strengths : ["Данные пока не сформированы."]).map((item) => (
+                                <li key={item}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="rounded-lg border border-[#5170FF]/10 bg-white p-5">
+                        <h3 className="mb-2 font-bold text-[#5170FF]">План развития</h3>
+                        <ul className="space-y-2 text-sm text-[#585858]">
+                            {(user.plan.developmentPlan?.length ? user.plan.developmentPlan : ["План пока не сформирован."]).map((item) => (
+                                <li key={item}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     );

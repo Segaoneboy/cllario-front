@@ -1,123 +1,103 @@
-"use client"
-import {useRouter} from "next/navigation";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {Person} from "@/types/Person";
-import toast from "react-hot-toast";
-import {saveGuestTest} from "@/utils/saveTestData";
-import {useUser} from "@/context/userContext";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { useAuthStore } from "@/store/useAuthStore";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+import { AuthUser } from "@/types/User";
+import { apiFetch } from "@/utils/api";
 
 
-export default function AuthLogin(){
-    const router = useRouter();
-    const { refreshUser } = useUser();
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Person>();
-    const obSubmit: SubmitHandler<Person> = async (data) => {
-        try{
-            const res = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(data),
-            });
+export default function AuthLogin({ onToggleView }: { onToggleView: () => void }) {
 
-            const result = await res.json();
+  const setUser = useAuthStore((state) => state.setUser);
+  const loginDemoEmployee = useAuthStore((state) => state.loginDemoEmployee);
+  const loginDemoHr = useAuthStore((state) => state.loginDemoHr);
+  const router = useRouter(); 
+  const {register, handleSubmit, formState: { errors } } = useForm<AuthUser>();
 
-            if(!res.ok) throw new Error(result.message);
-            toast.success('Успешный вход!');
-            const { saved } = await saveGuestTest();
 
-            if(saved){
-                await refreshUser();
-                toast.success("Результат теста сохранен")
-                router.push("/dashboard");
-            } else{
-                await refreshUser();
-                toast.error("Возникла ошибка при сохранении теста. Попробуйте позже", {duration: 2000})
-                router.push("/");
-            }
+  const loginMutation = useMutation({
+    mutationFn: (body: AuthUser) =>
+      apiFetch("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: (data) => {
+      if (data && data.user) {
+        setUser(data.user);
+        router.push("/dashboard"); 
+      }
+    },
+  });
 
-        } catch(error){
-            toast.error('Ошибка авторизации', {duration: 2000});
-            console.error("ошибка авторизации", error);
-        }
+  const onSubmit: SubmitHandler<AuthUser> = (data) =>{
+    if (data.email.trim().toLowerCase() === 'employ@cllario.tech') {
+      loginDemoEmployee();
+      router.push('/dashboard');
+      return;
     }
 
-    return(
-        <>
-            <div className="flex min-h-screen items-center justify-center  px-4">
-                <div className="w-full max-w-sm space-y-6 text-[#5170FF]">
-                    <div className="flex flex-col items-center">
-                        <img src="/Cllario-logo-site.png" alt="логотип" width={80} height={80} />
-                        <h1 className="text-2xl font-semibold mt-4 text-center">Войти в учетную запись</h1>
-                    </div>
+    if (data.email.trim().toLowerCase() === 'hr@cllario.tech') {
+      loginDemoHr();
+      router.push('/dashboard');
+      return;
+    }
 
-                    <form className="space-y-4" onSubmit={handleSubmit(obSubmit)}>
-                        <div className="flex flex-col gap-1">
-                            <div>
-                                <label htmlFor="email" className="block text-sm ml-1 mb-1 text-[#585858] font-semibold">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    {...register("email", {
-                                        required: "Введите email",
-                                        pattern: {
-                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                            message: "Некорректный email",
-                                        },
-                                    })}
-                                    id="email"
-                                    className="w-full rounded p-2 text-[#585858] border-[#5170FF] border-2 focus:outline-none focus:ring-1 focus:ring-[#5170FF]"
-                                />
-                                {errors.email && (
-                                    <p className="text-red-500 text-sm mt-1">
-                                        {errors.email.message}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <label htmlFor="password" className="block text-sm ml-1 mb-1 text-[#585858] font-semibold">
-                                    Password
-                                </label>
-                                <input
-                                    type="password"
-                                    {...register("password" as any, {
-                                        required: "Введите пароль",
-                                        minLength: {
-                                            value: 8,
-                                            message: "Минимум 8 символов",
-                                        },
-                                    })}
-                                    id="password"
-                                    className="w-full rounded p-2 text-[#585858] border-[#5170FF] border-2 focus:outline-none focus:ring-1 focus:ring-[#5170FF]"
-                                />
-                                {errors.password && (
-                                    <p className="text-red-500 text-sm mt-1">
-                                        {errors.password.message}
-                                    </p>
-                                )}
-                            </div>
-                        </div>
+    loginMutation.mutate(data)
+  }
 
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full rounded  bg-[#4a63df] hover:bg-[#4356c0] text-white my-4 py-2 font-medium transition disabled:opacity-60"
-                        >
-                            {isSubmitting ? "Авторизация..." : "Авторизоваться"}
-                        </button>
-                    </form>
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col">
+      <h2 className="text-[26px] font-semibold text-[#5170FF] text-center mb-6 tracking-wide">
+        Войти в учетную запись
+      </h2>
 
-                    <p className="text-center text-sm text-black">
-                        Нет аккаунта?{" "}
-                        <a href="#signup" className="text-[#5170FF] hover:text-[#4356c0]">
-                            Зарегистрировать аккаунт
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </>
-    )
+      <div className="mb-4 flex flex-col text-left w-full">
+        <label className="text-sm text-zinc-600 font-medium mb-1">Email</label>
+        <input
+          type="email"
+          {...register("email", {pattern:{value:/^[a-z0-9._%+-]+\@[a-z0-9.-]+\.[a-z]{2,}$/i, message: "Неккоректный email"}, required:"Поле обязательное"})}
+          className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
+          
+        />
+        <p className="text-red-500 mt-1">{errors.email?.message}</p>
+      </div>
+
+      <div className="mb-6 flex flex-col text-left w-full">
+        <label className="text-sm text-zinc-600 font-medium mb-1">Password</label>
+        <input
+          type="password"
+          {...register("password", {
+            minLength: {
+              value: 8,
+              message: "Минимальная длина пароля 8 символов"
+            }, 
+            required:"Поле обязательное"
+          })}
+          className="w-full bg-[#FFFDE0] border-2 border-[#5170FF] rounded-[5px] px-3 py-2 text-[16px] text-zinc-800 focus:outline-none"
+        />
+        <p className="text-red-500 mt-1">{errors.password?.message}</p>
+      </div>
+
+      <button
+        type="submit"
+        disabled={loginMutation.isPending}
+        className="w-full bg-[#5170FF] hover:bg-[#405fef] text-white font-normal py-3 rounded-[5px] text-[16px] transition-colors cursor-pointer text-center"
+      >
+        {loginMutation.isPending ? "Секунду..." : "Авторизоваться"}
+      </button>
+
+      <p className="text-center text-[14px] text-zinc-800 mt-8">
+        Нет аккаунта?{" "}
+        <span
+          onClick={onToggleView}
+          className="text-[#637dff] hover:underline cursor-pointer"
+        >
+          Зарегистрировать аккаунт
+        </span>
+      </p>
+    </form>
+  );
 }

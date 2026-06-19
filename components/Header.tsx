@@ -1,14 +1,16 @@
-"use client"
+"use client";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useUser } from "@/context/userContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Header() {
     const pathname = usePathname();
-    const { authorized, loading } = useUser();
+    
+    // Подключаем состояние из нашего Zustand стора
+    const { user, isLoading } = useAuthStore();
 
-    if (pathname === "/auth") return null;
+    if (pathname === "/auth" || pathname === "/dashboard") return null;
 
     return (
         <header className=" top-0 w-full z-50 ">
@@ -16,12 +18,13 @@ export default function Header() {
 
                 {/* 2. Левый блок */}
                 <div className="flex items-center gap-6 z-10 text-md md:text-lg lg:text-xl ">
-                    <Link href="/test" className="text-[#5170FF] font-semibold hover:opacity-60 transition-opacity">
+                    {/* <Link href="/test" className="text-[#5170FF] font-semibold hover:opacity-60 transition-opacity">
                         Тест
-                    </Link>
+                    </Link> */}
                     <a
                         href="https://t.me/sycroll"
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-[#5170FF] font-semibold hover:opacity-60 transition-opacity hidden sm:block"
                     >
                         Поддержка
@@ -48,19 +51,20 @@ export default function Header() {
                     <a
                         href="https://t.me/cllario"
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-[#5170FF] font-semibold hover:opacity-60 transition-opacity hidden md:block"
                     >
                         Соц. сети
                     </a>
 
-                    {loading ? (
+                    {isLoading ? (
                         <div className="h-5 w-12 bg-gray-100 animate-pulse rounded-full" />
                     ) : (
                         <Link
-                            href={authorized ? "/dashboard" : "/auth"}
+                            href={user ? "/dashboard" : "/auth"}
                             className="text-[#5170FF] font-semibold hover:opacity-60 transition-opacity"
                         >
-                            {authorized ? "Кабинет" : "Вход"}
+                            {user ? "Кабинет" : "Вход"}
                         </Link>
                     )}
                 </div>

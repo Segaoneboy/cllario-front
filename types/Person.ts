@@ -13,6 +13,4 @@ export type Person = {
 
     motivation?: string;
 
-
-
 }
